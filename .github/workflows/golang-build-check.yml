@@ -1,0 +1,35 @@
+name: golang build check
+
+on: workflow_call
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      GOPRIVATE: ${{ env.GOPRIVATE }}
+      GITHUB_ACCESS_TOKEN: ${{ secrets.CICD_DOCKER_BUILD_PAT }}
+    services:
+      redis:
+        image: redis
+        ports:
+          - 6379:6379
+      postgres:
+        image: postgres:14.5
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_PASSWORD: my-secret
+          POSTGRES_DB: testdb
+    steps:
+      - run: git config --global url.https://$GITHUB_ACCESS_TOKEN@github.com/.insteadOf https://github.com/
+      - uses: actions/checkout@v4
+      - uses: bufbuild/buf-setup-action@v1
+        with:
+          version: "1.34.0"
+#      - name: login BSR
+#        run: echo ${{ secrets.BUF_API_TOKEN }} | buf registry login --username ${{ secrets.BUF_USER }} --token-stdin
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.22"
+      - run: make build
+      - run: make test

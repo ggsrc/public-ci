@@ -1,0 +1,25 @@
+# Binaries for programs and plugins
+bin
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary, built with `go test -c`
+*.test
+*.run
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
+
+# Dependency directories (remove the comment below to include it)
+vendor/
+
+.idea
+
+/cmd/playground_app
+coverage.txt
+
+# Mac OS
+.DS_Store
