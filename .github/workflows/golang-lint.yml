@@ -6,7 +6,7 @@ jobs:
   golangci:
     runs-on: ubuntu-latest
     env:
-      GOPRIVATE: ${{ secrets.GOPRIVATE }},github.com/${{ github.repository_owner }}/*
+      GOPRIVATE: ${{ vars.GOPRIVATE }},github.com/${{ github.repository_owner }}/*
       GITHUB_ACCESS_TOKEN: ${{ secrets.CICD_DOCKER_BUILD_PAT }}
     steps:
       - uses: actions/setup-go@v5
