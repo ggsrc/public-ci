@@ -6,7 +6,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      GOPRIVATE: ${{ env.GOPRIVATE }}
+      GOPRIVATE: ${{ secrets.GOPRIVATE }},github.com/${{ github.repository_owner }}/*
       GITHUB_ACCESS_TOKEN: ${{ secrets.CICD_DOCKER_BUILD_PAT }}
     services:
       redis:
