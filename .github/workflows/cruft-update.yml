@@ -1,6 +1,10 @@
 name: Update repository Template
 
-on: workflow_call
+on:
+  workflow_call:
+    secrets:
+      CICD_DOCKER_BUILD_PAT:
+        required: true
 
 jobs:
   update:
