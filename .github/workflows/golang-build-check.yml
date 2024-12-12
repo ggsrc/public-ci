@@ -12,6 +12,23 @@ jobs:
     env:
       GOPRIVATE: ${{ vars.GOPRIVATE }}
       GITHUB_ACCESS_TOKEN: ${{ secrets.CICD_DOCKER_BUILD_PAT }}
+    steps:
+      - run: git config --global url.https://$GITHUB_ACCESS_TOKEN@github.com/.insteadOf https://github.com/
+      - uses: actions/checkout@v4
+      - uses: bufbuild/buf-setup-action@v1
+        with:
+          version: "1.34.0"
+      #      - name: login BSR
+      #        run: echo ${{ secrets.BUF_API_TOKEN }} | buf registry login --username ${{ secrets.BUF_USER }} --token-stdin
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.22"
+      - run: make build
+  test:
+    runs-on: ubuntu-latest
+    env:
+      GOPRIVATE: ${{ vars.GOPRIVATE }}
+      GITHUB_ACCESS_TOKEN: ${{ secrets.CICD_DOCKER_BUILD_PAT }}
     services:
       redis:
         image: redis
@@ -27,13 +44,12 @@ jobs:
     steps:
       - run: git config --global url.https://$GITHUB_ACCESS_TOKEN@github.com/.insteadOf https://github.com/
       - uses: actions/checkout@v4
-      - uses: bufbuild/buf-setup-action@v1
         with:
-          version: "1.34.0"
-#      - name: login BSR
-#        run: echo ${{ secrets.BUF_API_TOKEN }} | buf registry login --username ${{ secrets.BUF_USER }} --token-stdin
-      - uses: actions/setup-go@v5
+          token: ${{ secrets.CICD_DOCKER_BUILD_PAT }}
+          submodules: true
+      - name: build service
+        uses: actions/setup-go@v5
         with:
           go-version: "1.22"
-      - run: make build
+          cache: true
       - run: make test
