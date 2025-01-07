@@ -56,8 +56,8 @@ jobs:
     steps:
       - run: git config --global url.https://$GITHUB_ACCESS_TOKEN@github.com/.insteadOf https://github.com/
       - uses: actions/checkout@v4
-        with:
-          submodules: true
+#        with:
+#          submodules: true
       - name: build service
         uses: actions/setup-go@v5
         with:
