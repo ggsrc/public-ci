@@ -56,8 +56,8 @@ jobs:
     steps:
       - run: git config --global url.https://$GITHUB_ACCESS_TOKEN@github.com/.insteadOf https://github.com/
       - uses: actions/checkout@v4
-        with:
-          submodules: true
+#        with:
+#          submodules: true
       - uses: bufbuild/buf-setup-action@v1
         with:
           version: "1.34.0"
