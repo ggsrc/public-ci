@@ -2,6 +2,12 @@ name: golang lint
 
 on:
   workflow_call:
+    inputs:
+      go-version:
+        description: 'Go version to use'
+        required: false
+        type: string
+        default: '1.24'
     secrets:
       CICD_DOCKER_BUILD_PAT:
         required: true
@@ -15,7 +21,7 @@ jobs:
     steps:
       - uses: actions/setup-go@v5
         with:
-          go-version: 1.24
+          go-version: ${{ inputs.go-version || '1.24' }}
       - run: git config --global url.https://$GITHUB_ACCESS_TOKEN@github.com/.insteadOf https://github.com/
       - uses: actions/checkout@v4
       - name: golangci-lint

@@ -1,10 +1,17 @@
 name: Go Unit Tests with HTML Report
 
 on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+  workflow_call:
+    inputs:
+      go-version:
+        description: 'Go version to use'
+        required: false
+        type: string
+        default: '1.24'
+    secrets:
+      CICD_DOCKER_BUILD_PAT:
+        description: 'GitHub access token for private repositories'
+        required: true
 
 # Pages can upload files and display HTML, but the pages will be public, suitable for some open source repositories.
 # permissions:
@@ -20,7 +27,7 @@ jobs:
     runs-on: ubuntu-22.04
     env:
       GOPRIVATE: github.com/alva-ai/*
-      GITHUB_ACCESS_TOKEN: ${{ secrets.CICD_DOCKER_BUILD_PAT2 }}
+      GITHUB_ACCESS_TOKEN: ${{ secrets.CICD_DOCKER_BUILD_PAT }}
       JAGENT_PG_APPNAME: jagent
       JAGENT_PG_DBNAME: jagent_test_db
       JAGENT_PG_PASSWORD: my-secret
@@ -38,7 +45,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v5
       with:
-        go-version: '1.24'
+        go-version: ${{ inputs.go-version || '1.24' }}
         cache: true
 
     - run: git config --global url.https://$GITHUB_ACCESS_TOKEN@github.com/.insteadOf https://github.com/

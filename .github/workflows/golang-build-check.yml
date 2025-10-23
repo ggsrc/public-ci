@@ -2,6 +2,12 @@ name: golang build check
 
 on:
   workflow_call:
+    inputs:
+      go-version:
+        description: 'Go version to use'
+        required: false
+        type: string
+        default: '1.24'
     secrets:
       CICD_DOCKER_BUILD_PAT:
         required: true
@@ -34,7 +40,7 @@ jobs:
 #        run: echo ${{ secrets.BUF_API_TOKEN }} | buf registry login --username ${{ secrets.BUF_USER }} --token-stdin
       - uses: actions/setup-go@v5
         with:
-          go-version: "1.24"
+          go-version: ${{ inputs.go-version || '1.24' }}
       - run: make build
   test:
     runs-on: ubuntu-latest
@@ -64,6 +70,6 @@ jobs:
       - name: build service
         uses: actions/setup-go@v5
         with:
-          go-version: "1.24"
+          go-version: ${{ inputs.go-version || '1.24' }}
           cache: true
       - run: make test
