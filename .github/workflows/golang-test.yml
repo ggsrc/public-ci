@@ -55,6 +55,12 @@ jobs:
         go install gotest.tools/gotestsum@v1.12.3
 
     - name: Run tests and generate report html
+      env:
+        POSTGRES_PASSWORD: my-secret
+        POSTGRES_APPNAME: testapp
+        POSTGRES_DBNAME: testdb
+        POSTGRES_PORT: 5432
+        POSTGRES_USER: postgres
       run: |
         export PATH=$(go env GOPATH)/bin:$PATH
         set -o pipefail # Enable pipefail
