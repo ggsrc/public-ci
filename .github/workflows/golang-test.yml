@@ -1,0 +1,110 @@
+name: Go Unit Tests with HTML Report
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+# Pages can upload files and display HTML, but the pages will be public, suitable for some open source repositories.
+# permissions:
+#   contents: read
+#   pages: write # Allow writing to GitHub Pages
+#   id-token: write # If using OIDC token
+permissions:
+  contents: read
+  pull-requests: write # Allow writing PR comments
+
+jobs:
+  test:
+    runs-on: ubuntu-22.04
+    env:
+      GOPRIVATE: github.com/alva-ai/*
+      GITHUB_ACCESS_TOKEN: ${{ secrets.CICD_DOCKER_BUILD_PAT2 }}
+      JAGENT_PG_APPNAME: jagent
+      JAGENT_PG_DBNAME: jagent_test_db
+      JAGENT_PG_PASSWORD: my-secret
+      JAGENT_PG_PORT: 5432
+      JAGENT_PG_USER: postgres
+    services:
+      postgres:
+        image: postgres:14.5
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_PASSWORD: my-secret
+          POSTGRES_DB: jagent_test_db
+    steps:
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: '1.24'
+        cache: true
+
+    - run: git config --global url.https://$GITHUB_ACCESS_TOKEN@github.com/.insteadOf https://github.com/
+
+    - name: Check out code
+      uses: actions/checkout@v4
+
+    - name: Install go-test-report
+      run: |
+        # go get -u github.com/vakenbolt/go-test-report
+        go install github.com/vakenbolt/go-test-report@v0.9.3
+        go install gotest.tools/gotestsum@v1.12.3
+
+    - name: Install jagent binary
+      run: |
+        go install cmd/jagent/jagent.go
+        jagent -version
+
+    - name: Run tests and generate report html
+      run: |
+        export PATH=$(go env GOPATH)/bin:$PATH
+        set -o pipefail # Enable pipefail
+        go test -coverprofile=coverage.out -covermode=atomic -json -p 1 ./...  | tee >(go-test-report -o test-report.html) | gotestsum
+    
+    - name: Upload HTML test report
+      if: always() # Ensure upload report even if tests fail (if generated)
+      uses: actions/upload-artifact@v4
+      with:
+        name: go-test-report-html
+        path: test-report.html
+        retention-days: 7 # Optional: report retention days
+    
+    # Pages can upload files and display HTML, but the pages will be public.
+    # - name: Setup Pages
+    #   uses: actions/configure-pages@v4
+
+    # - name: Upload artifact
+    #   if: always() # Ensure upload report even if tests fail (if generated)
+    #   uses: actions/upload-pages-artifact@v3
+    #   with:
+    #     # Upload directory containing HTML files
+    #     path: test-report.html
+
+    # - name: Deploy to GitHub Pages
+    #   if: always() # Ensure upload report even if tests fail (if generated)
+    #   id: deployment
+    #   uses: actions/deploy-pages@v4
+
+    - name: gengerate coverage report
+      id: code_coverage
+      run: |
+        export PATH=$(go env GOPATH)/bin:$PATH
+        go tool cover -func=coverage.out
+        codecov=$(go tool cover -func=coverage.out | tail -n 1 | awk '{print $3}')
+        echo "codecov=$codecov" >> $GITHUB_OUTPUT
+
+    - name: Add PR comment
+      uses: actions/github-script@v7
+      # Only run this job when the event is pull_request
+      if: github.event_name == 'pull_request'
+      with:
+        script: |
+          const output = `${{ steps.code_coverage.outputs.codecov }}`; // Get result from previous step
+          github.rest.issues.createComment({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            issue_number: context.issue.number, // context.issue.number is the PR number
+            body: `**Code coverage:** ${output}`
+          });
