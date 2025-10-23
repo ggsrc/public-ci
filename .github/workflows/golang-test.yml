@@ -26,13 +26,8 @@ jobs:
   test:
     runs-on: ubuntu-22.04
     env:
-      GOPRIVATE: github.com/alva-ai/*
+      GOPRIVATE: ${{ vars.GOPRIVATE }}
       GITHUB_ACCESS_TOKEN: ${{ secrets.CICD_DOCKER_BUILD_PAT }}
-      JAGENT_PG_APPNAME: jagent
-      JAGENT_PG_DBNAME: jagent_test_db
-      JAGENT_PG_PASSWORD: my-secret
-      JAGENT_PG_PORT: 5432
-      JAGENT_PG_USER: postgres
     services:
       postgres:
         image: postgres:14.5
@@ -40,7 +35,7 @@ jobs:
           - 5432:5432
         env:
           POSTGRES_PASSWORD: my-secret
-          POSTGRES_DB: jagent_test_db
+          POSTGRES_DB: testdb
     steps:
     - name: Set up Go
       uses: actions/setup-go@v5
@@ -58,11 +53,6 @@ jobs:
         # go get -u github.com/vakenbolt/go-test-report
         go install github.com/vakenbolt/go-test-report@v0.9.3
         go install gotest.tools/gotestsum@v1.12.3
-
-    - name: Install jagent binary
-      run: |
-        go install cmd/jagent/jagent.go
-        jagent -version
 
     - name: Run tests and generate report html
       run: |
