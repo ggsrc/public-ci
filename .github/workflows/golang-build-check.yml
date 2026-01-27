@@ -67,6 +67,7 @@ jobs:
       - uses: bufbuild/buf-setup-action@v1
         with:
           version: "1.34.0"
+          github_token: ${{ secrets.CICD_DOCKER_BUILD_PAT }}
       - name: build service
         uses: actions/setup-go@v5
         with:
