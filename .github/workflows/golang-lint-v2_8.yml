@@ -1,0 +1,30 @@
+name: golang lint v2.8
+
+on:
+  workflow_call:
+    inputs:
+      go-version:
+        description: 'Go version to use'
+        required: false
+        type: string
+        default: '1.25'
+    secrets:
+      CICD_DOCKER_BUILD_PAT:
+        required: true
+
+jobs:
+  golangci:
+    runs-on: ubuntu-latest
+    env:
+      GOPRIVATE: ${{ vars.GOPRIVATE }}
+      GITHUB_ACCESS_TOKEN: ${{ secrets.CICD_DOCKER_BUILD_PAT }}
+    steps:
+      - run: git config --global url.https://$GITHUB_ACCESS_TOKEN@github.com/.insteadOf https://github.com/
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ${{ inputs.go-version || '1.24' }}
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v7
+        with:
+          version: v2.8
