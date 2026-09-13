@@ -8,6 +8,11 @@ on:
         required: false
         type: string
         default: '1.25'
+      lint-version:
+        description: 'golangci-lint version to use'
+        required: false
+        type: string
+        default: 'v2.8'
     secrets:
       CICD_DOCKER_BUILD_PAT:
         required: true
@@ -27,4 +32,4 @@ jobs:
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v7
         with:
-          version: v2.8
+          version: ${{ inputs.lint-version }}
