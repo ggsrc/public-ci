@@ -40,7 +40,7 @@ jobs:
           POSTGRES_DB: testdb
     steps:
     - name: Set up Go
-      uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
+      uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
       with:
         go-version: ${{ inputs.go-version || '1.24' }}
         cache: true
@@ -48,7 +48,7 @@ jobs:
     - run: git config --global url.https://$GITHUB_ACCESS_TOKEN@github.com/.insteadOf https://github.com/
 
     - name: Check out code
-      uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
     - name: Install go-test-report
       run: |
@@ -70,7 +70,7 @@ jobs:
     
     - name: Upload HTML test report
       if: always() # Ensure upload report even if tests fail (if generated)
-      uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+      uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
       with:
         name: go-test-report-html
         path: test-report.html
@@ -101,7 +101,7 @@ jobs:
         echo "codecov=$codecov" >> $GITHUB_OUTPUT
 
     - name: Add PR comment
-      uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.1.0
+      uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
       # Only run this job when the event is pull_request
       if: github.event_name == 'pull_request'
       with:
