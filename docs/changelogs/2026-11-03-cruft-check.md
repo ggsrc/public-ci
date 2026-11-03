@@ -1,7 +1,8 @@
 # fix(cruft-update): open update PRs only when the template has changed
 
 Tracking: alva-ai/mono-meta#1115 (decision G15 = B: keep ggsrv-layout as
-the service template and fix its sync). Stacked on #7.
+the service template and fix its sync). Merged together with the hardening
+in #7.
 
 ## 1. Current state
 
@@ -36,6 +37,9 @@ Callers keep the same interface (`CICD_DOCKER_BUILD_PAT`).
 
 ## 4. Remaining work
 
-- The token used by the Alva repositories cannot read ggsrv-layout (it is
-  scoped to the alva-ai organization); how to grant access is an open
-  decision for Yumin.
+- Resolved 2026-11-03: ggsrv-layout is now public, so the check needs no
+  token to read it. Its history was restarted, so the commits recorded in
+  the generated projects' `.cruft.json` no longer exist there: until a
+  project is re-linked (ggsrv-layout `docs/changelogs/2026-11-03-public-repository.md`),
+  its check fails with `SHA ... could not be resolved`, which this change
+  reports as an error instead of opening update PRs.
