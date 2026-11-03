@@ -1,3 +1,5 @@
+# DEPRECATED: no known callers. Kept so that an unknown caller does not break;
+# it will be removed in a future major version (v2).
 name: Remove old artifacts
 
 on: workflow_call
@@ -9,7 +11,7 @@ jobs:
 
     steps:
       - name: Remove old artifacts
-        uses: c-hive/gha-remove-artifacts@v1.4.0
+        uses: c-hive/gha-remove-artifacts@44fc7acaf1b3d0987da0e8d4707a989d80e9554b # v1.4.0
         with:
           age: '1 days' # '<number> <unit>', e.g. 5 days, 2 years, 90 seconds, parsed by Moment.js
           # Optional inputs
