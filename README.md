@@ -30,7 +30,8 @@ jobs:
 - `CICD_DOCKER_BUILD_PAT` is optional. When it is set, it is used for
   `git` access to github.com so that private modules can be fetched.
 - Third-party actions in these workflows are pinned by commit SHA; Dependabot
-  proposes updates weekly.
+  proposes minor and patch updates weekly. A new major version of an action
+  is adopted in its own PR, after checking what it changes for the callers.
 
 ## License
 
