@@ -1,6 +1,6 @@
 # public-ci
 
-Reusable GitHub Actions workflows for ggsrc and Alva repositories.
+Reusable GitHub Actions workflows for Go repositories.
 
 | Workflow | Use | Status |
 |---|---|---|
