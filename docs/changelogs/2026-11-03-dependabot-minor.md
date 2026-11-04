@@ -33,4 +33,7 @@ Tracking: alva-ai/mono-meta#1115.
 
 ## 5. Outcome
 
-- [ ] Merged.
+- [x] #9 closed.
+- [x] Merged on 2026-11-04 through the `main-protect` bypass, which Yumin
+  approved for this PR.
+- No new tag: the workflows that callers run do not change.
