@@ -1,4 +1,7 @@
 # Weekly updates for the actions these workflows use, as one grouped PR.
+# Only minor and patch updates: callers run these workflows from @main, so a
+# major version of an action is adopted deliberately, in its own PR, after
+# checking what it changes for the callers.
 version: 2
 updates:
   - package-ecosystem: github-actions
@@ -7,6 +10,9 @@ updates:
       interval: weekly
     cooldown:
       default-days: 7
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
     groups:
       actions:
         patterns: ["*"]
